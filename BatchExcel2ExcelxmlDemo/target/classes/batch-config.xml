@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns = "http://www.springframework.org/schema/beans" 
+   xmlns:batch = "http://www.springframework.org/schema/batch" 
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+   xsi:schemaLocation = "http://www.springframework.org/schema/batch 
+
+   http://www.springframework.org/schema/batch/spring-batch-2.2.xsd 
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+   
+   <batch:job id="XmlToXmlJob">
+   	 <batch:step id="step1">
+   	   <batch:tasklet>
+   	     <batch:chunk reader="itemreader" processor="itemProcessor" 
+   	     writer="itemWriter" commit-interval="1" />
+   	   </batch:tasklet>
+   	 </batch:step>
+   	 <batch:listeners>
+          <batch:listener ref="listener" />
+     </batch:listeners>
+   </batch:job>
+   
+   
+   <bean id="itemreader" class="org.springframework.batch.item.excel.poi.PoiItemReader">
+   	 <property name="resource" value="${file.input}" /> 
+   	 <property name="linesToSkip" value="1" /> 
+   	 	<property name="rowMapper">
+			<bean class="org.springframework.batch.item.excel.mapping.BeanWrapperRowMapper">
+		        <property name="targetType" value="dummy.Student"/>
+		    </bean>
+		 </property>
+   </bean>
+  
+   <bean id="item" class="dummy.Student"/> 
+   <bean id="itemProcessor" class="dummy.StudentProcessor"/>
+   <bean id="listener" class="dummy.StudentJobListener"/>
+   
+   <bean id="itemWriter" class="dummy.MyExcelWriter"/>
+    
+</beans>
